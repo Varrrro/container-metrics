@@ -1,0 +1,8 @@
+# VSCode configuration files
+.vscode/
+
+# Python virtual environment
+.venv/
+
+# Environment variables
+.env
