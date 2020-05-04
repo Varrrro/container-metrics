@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net"
 	"os"
@@ -8,12 +9,12 @@ import (
 
 func main() {
 	args := os.Args
-	if len(args) != 2 {
-		log.Fatalln("Incorrect argument: The target's IP address is needed")
+	if len(args) != 3 {
+		log.Fatalln("Usage: pinger <ip> <port>")
 	}
-	targetIP := os.Args[1]
+	targetaddr := fmt.Sprintf("%s:%s", os.Args[1], os.Args[2])
 
-	taddr, err := net.ResolveUDPAddr("udp", targetIP)
+	taddr, err := net.ResolveUDPAddr("udp", targetaddr)
 	if err != nil {
 		log.Fatalf("Unable to resolve target address: %s\n", err.Error())
 	}
