@@ -23,27 +23,28 @@ ssh = SSHClient()
 ssh.set_missing_host_key_policy(AutoAddPolicy)
 ssh.connect(hostname=hostname, username=username, password=password)
 
-# Open UDP socket
-udp_sock = socket(AF_INET, SOCK_DGRAM)
-udp_sock.bind(('', 8080))
-udp_sock.settimeout(5)
-
-# Get local IP address
+# Set local IP address and port
 lhostname = gethostname()
 laddr = gethostbyname(lhostname)
+lport = 8080
+
+# Open UDP socket
+udp_sock = socket(AF_INET, SOCK_DGRAM)
+udp_sock.bind(('', lport))
+udp_sock.settimeout(5)
 
 args = sys.argv
 if len(args) != 2:
-    sys.exit('Incorrect argument: the number of iterations needs to be specified')
+    sys.exit('Usage: test.py <niter>')
 
 # Start testing loop
 niter = int(args[1])
-containers = ['pinger_go']
+containers = ['pinger_c', 'pinger_go', 'pinger_rs']
 results = pd.DataFrame(columns=['iter', 'impl', 'start_time', 'run_time'])
 for cont in containers:
     for i in range(0, niter):
         ssh.exec_command(
-            f'docker-compose run --name pinger {cont} {laddr}:8080')
+            f'docker-compose run --name pinger {cont} {laddr} {lport}')
 
         try:
             udp_sock.recvfrom(1024)
@@ -81,6 +82,8 @@ for cont in containers:
                 'start_time': pd.Series([start_time], dtype='float'),
                 'run_time': pd.Series([run_time], dtype='float')
             }), ignore_index=True)
+
+            print(f'[{cont} | {i}] Request recorded')
         except timeout:
             print(f'[{cont} | {i}] Request timed out')
         finally:
@@ -95,7 +98,7 @@ for cont in containers:
     print(f'[{cont}] Mean values:\n{cont_mean}')
 
 results.to_csv(
-    f'results/start-time-{datetime.now().strftime("%Y%M%d-%H%M%S")}.csv', index_label='id')
+    f'results/start-time-{datetime.now().strftime("%Y%M%d")}-{niter}.csv', index_label='id')
 print('Tests finished correctly')
 
 ssh.close()
