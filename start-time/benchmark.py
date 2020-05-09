@@ -44,7 +44,7 @@ results = pd.DataFrame(columns=['iter', 'impl', 'start_time', 'run_time'])
 for cont in containers:
     for i in range(0, niter):
         ssh.exec_command(
-            f'docker-compose run --name pinger {cont} {laddr} {lport}')
+            f'docker run --name pinger {cont} {laddr} {lport}')
 
         try:
             udp_sock.recvfrom(1024)
@@ -87,7 +87,8 @@ for cont in containers:
         except timeout:
             print(f'[{cont} | {i}] Request timed out')
         finally:
-            ssh.exec_command('docker rm -f pinger')
+            _, stdout, _ = ssh.exec_command('docker rm -f pinger')
+            stdout.channel.recv_exit_status()  # wait for command to finish
 
     # Show mean values for each container
     cont_mean = results.groupby(
