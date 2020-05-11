@@ -6,3 +6,12 @@
 
 # Environment variables
 .env
+
+# R stuff
+.Rproj.user
+.Rhistory
+.Rapp.history
+.RData
+.Ruserdata
+.Rproj.user/
+.Renviron
