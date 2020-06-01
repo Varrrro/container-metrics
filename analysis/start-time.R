@@ -8,7 +8,7 @@ arm <-
 
 i386 <-
   read_csv("../results/start-time-i386-20203810-1000.csv") %>%
-  mutate(arch = "i686") %>%
+  mutate(arch = "i386") %>%
   select(-id)
 
 data <- bind_rows(arm, i386) # append datasets
@@ -39,11 +39,11 @@ data %>%
 
 # i386 times lineplot
 data %>%
-  filter(arch == "i686") %>%
+  filter(arch == "i386") %>%
   ggplot(aes(x = iter, y = start_time, colour = impl)) +
   geom_line() +
   labs(
-    title = "Tiempo de lanzamiento en i686",
+    title = "Tiempo de lanzamiento en i386",
     x = "Iteración",
     y = "Tiempo (ms)",
     colour = "Implementación"

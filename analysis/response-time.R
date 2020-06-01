@@ -3,14 +3,13 @@ library(tidyverse)
 # Load datasets
 arm <-
   read_csv("../results/response-time-arm-20201209-1000.csv") %>%
-  bind_rows(read_csv("../results/response-time-arm-paused-20205209-10.csv")) %>%
   mutate(arch = "arm32v7") %>%
   mutate(resp_time = resp_time * 1000) %>%
   select(-id)
 
 i386 <-
   read_csv("../results/response-time-i386-20203611-1000.csv") %>%
-  mutate(arch = "i686") %>%
+  mutate(arch = "i386") %>%
   mutate(resp_time = resp_time * 1000) %>%
   select(-id)
 
@@ -73,12 +72,12 @@ data %>%
 
 # i386 running times lineplot
 data %>%
-  filter(arch == "i686") %>%
+  filter(arch == "i386") %>%
   filter(mst == "master_running") %>%
   ggplot(aes(x = iter, y = resp_time, colour = cont)) +
   geom_line() +
   labs(
-    title = "Tiempo de respuesta en i686 con el contenedor en ejecución",
+    title = "Tiempo de respuesta en i386 con el contenedor en ejecución",
     x = "Iteración",
     y = "Tiempo (ms)",
     colour = "Implementación"
@@ -87,12 +86,12 @@ data %>%
 
 # i386 stopped times lineplot
 data %>%
-  filter(arch == "i686") %>%
+  filter(arch == "i386") %>%
   filter(mst == "master_stopped") %>%
   ggplot(aes(x = iter, y = resp_time, colour = cont)) +
   geom_line() +
   labs(
-    title = "Tiempo de respuesta en i686 con el contenedor parado",
+    title = "Tiempo de respuesta en i386 con el contenedor parado",
     x = "Iteración",
     y = "Tiempo (ms)",
     colour = "Implementación"
@@ -101,12 +100,12 @@ data %>%
 
 # i386 paused times lineplot
 data %>%
-  filter(arch == "i686") %>%
+  filter(arch == "i386") %>%
   filter(mst == "master_paused") %>%
   ggplot(aes(x = iter, y = resp_time, colour = cont)) +
   geom_line() +
   labs(
-    title = "Tiempo de respuesta en i686 con el contenedor pausado",
+    title = "Tiempo de respuesta en i386 con el contenedor pausado",
     x = "Iteración",
     y = "Tiempo (ms)",
     colour = "Implementación"
@@ -125,8 +124,7 @@ data %>%
     title = "Tiempo medio de respuesta",
     x = "Estado inicial",
     y = "Tiempo (ms)",
-    fill = "Arquitectura",
-    caption = "1000 muestras de contenedor parado en i686 frente a 10 en arm32v7"
+    fill = "Arquitectura"
   ) +
   scale_x_discrete(labels = c("Pausado", "En ejecución", "Parado"))
 
@@ -158,11 +156,9 @@ data %>%
     title = "Tiempo medio de respuesta con el contenedor parado",
     x = "Implementación",
     y = "Tiempo (ms)",
-    fill = "Arquitectura",
-    caption = "1000 muestras en i686 frente a 10 en arm32v7"
+    fill = "Arquitectura"
   ) +
   scale_x_discrete(labels = c("C", "Go", "Rust"))
-
 
 # Paused mean times comparison barplot
 data %>%
